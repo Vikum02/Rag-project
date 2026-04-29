@@ -49,3 +49,8 @@ def query(request: QueryRequest):
 
     result = ask(request.question)
     return result
+
+@app.get("/docs-list")
+def list_documents():
+    files = [f for f in os.listdir("data") if f.endswith(".pdf")]
+    return {"documents": files, "count": len(files)}
