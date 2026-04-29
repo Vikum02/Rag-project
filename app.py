@@ -39,3 +39,38 @@ with st.sidebar:
                 st.markdown(f"- {doc}")
     except:
         st.warning("API not reachable")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
+        if "sources" in msg:
+            st.caption(f"Sources: {', '.join(msg['sources'])}")
+
+if question := st.chat_input("Ask a question about your document..."):
+    st.session_state.messages.append({"role": "user", "content": question})
+    with st.chat_message("user"):
+        st.write(question)
+
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            try:
+                response = requests.post(
+                    f"{API_URL}/query",
+                    json={"question": question}
+                )
+                if response.status_code == 200:
+                    data = response.json()
+                    st.write(data["answer"])
+                    st.caption(f"Sources: {', '.join(data['sources'])}")
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": data["answer"],
+                        "sources": data["sources"]
+                    })
+                else:
+                    st.error("Something went wrong. Try again.")
+            except Exception as e:
+                st.error(f"Could not reach the API: {e}")
