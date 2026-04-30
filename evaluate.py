@@ -1,7 +1,7 @@
 from ragas import evaluate
 from ragas.metrics.collections import Faithfulness, AnswerRelevancy, ContextPrecision
-from ragas.llms import LangchainLLMWrapper
-from langchain_openai import ChatOpenAI
+from ragas.llms import llm_factory
+from openai import OpenAI
 from datasets import Dataset
 from query import retrieve_chunks, ask
 from dotenv import load_dotenv
@@ -9,10 +9,8 @@ import os
 
 load_dotenv()
 
-llm = LangchainLLMWrapper(ChatOpenAI(
-    model="gpt-3.5-turbo",
-    api_key=os.getenv("OPENAI_API_KEY")
-))
+openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+llm = llm_factory("gpt-3.5-turbo", client=openai_client)
 
 questions = [
     "what is this document about",
