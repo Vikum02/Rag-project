@@ -1,13 +1,13 @@
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain.memory import ConversationBufferMemory
+from langchain_core.chat_history import InMemoryChatMessageHistory
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-memory = ConversationBufferMemory(return_messages=True)
+memory = InMemoryChatMessageHistory()
 
 def load_vectorstore():
     embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
@@ -54,7 +54,7 @@ def ask(question: str) -> dict:
     print("Retrieving relevant chunks...")
 
     chunks = retrieve_chunks(question, k=3)
-    history = memory.chat_memory.messages
+    history = memory.messages
     prompt = build_prompt(question, chunks, history)
 
     print("Sending to GPT...")
@@ -68,8 +68,8 @@ def ask(question: str) -> dict:
 
     answer = response.choices[0].message.content
 
-    memory.chat_memory.add_user_message(question)
-    memory.chat_memory.add_ai_message(answer)
+    memory.add_user_message(question)
+    memory.add_ai_message(answer)
 
     sources = list(set([
         f"{doc.metadata.get('source_file', 'unknown')} — page {doc.metadata.get('page', 'unknown')}"
