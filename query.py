@@ -1,5 +1,5 @@
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from openai import OpenAI
 from dotenv import load_dotenv
