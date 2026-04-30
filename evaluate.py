@@ -1,5 +1,5 @@
 from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy, context_precision
+from ragas.metrics.collections import faithfulness, answer_relevancy, context_precision
 from datasets import Dataset
 from query import retrieve_chunks, ask
 from dotenv import load_dotenv
