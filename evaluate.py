@@ -1,5 +1,5 @@
 from ragas import evaluate
-from ragas.metrics.collections import faithfulness, answer_relevancy, context_precision
+from ragas.metrics.collections import Faithfulness, AnswerRelevancy, ContextPrecision
 from datasets import Dataset
 from query import retrieve_chunks, ask
 from dotenv import load_dotenv
@@ -31,7 +31,7 @@ dataset = Dataset.from_dict(data)
 print("\nEvaluating with RAGAs...")
 results = evaluate(
     dataset,
-    metrics=[faithfulness, answer_relevancy, context_precision]
+    metrics=[Faithfulness(), AnswerRelevancy(), ContextPrecision()]
 )
 
 print("\n=== RAGAs Evaluation Results ===")
