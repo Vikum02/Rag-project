@@ -1,10 +1,18 @@
 from ragas import evaluate
 from ragas.metrics.collections import Faithfulness, AnswerRelevancy, ContextPrecision
+from ragas.llms import LangchainLLMWrapper
+from langchain_openai import ChatOpenAI
 from datasets import Dataset
 from query import retrieve_chunks, ask
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
+
+llm = LangchainLLMWrapper(ChatOpenAI(
+    model="gpt-3.5-turbo",
+    api_key=os.getenv("OPENAI_API_KEY")
+))
 
 questions = [
     "what is this document about",
@@ -31,7 +39,11 @@ dataset = Dataset.from_dict(data)
 print("\nEvaluating with RAGAs...")
 results = evaluate(
     dataset,
-    metrics=[Faithfulness(), AnswerRelevancy(), ContextPrecision()]
+    metrics=[
+        Faithfulness(llm=llm),
+        AnswerRelevancy(llm=llm),
+        ContextPrecision(llm=llm)
+    ]
 )
 
 print("\n=== RAGAs Evaluation Results ===")
