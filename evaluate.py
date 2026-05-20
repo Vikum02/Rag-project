@@ -1,7 +1,7 @@
 from ragas import evaluate
 from ragas.metrics.collections import Faithfulness, AnswerRelevancy, ContextPrecision
 from ragas.llms import llm_factory
-from ragas.embeddings import embedding_factory
+from ragas.embeddings import OpenAIEmbeddings
 from openai import OpenAI
 from datasets import Dataset
 from query import retrieve_chunks, ask
@@ -12,7 +12,7 @@ load_dotenv()
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 llm = llm_factory("gpt-3.5-turbo", client=openai_client)
-embeddings = embedding_factory("text-embedding-3-small", client=openai_client)
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small", client=openai_client)
 
 questions = [
     "what is this document about",
